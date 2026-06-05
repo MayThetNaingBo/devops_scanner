@@ -1,12 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { login, saveAuth } from "@/src/lib/api";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginLoading />}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginLoading() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-white">
+      <div className="flex items-center gap-3 text-slate-300">
+        <Loader2 className="h-6 w-6 animate-spin text-emerald-400" />
+        Loading login...
+      </div>
+    </main>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const redirectFromEmail = searchParams.get("redirect");
 
   const [form, setForm] = useState({
     email: "",
@@ -15,8 +37,6 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const searchParams = useSearchParams();
-const redirectFromEmail = searchParams.get("redirect");
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -28,24 +48,27 @@ const redirectFromEmail = searchParams.get("redirect");
       const data = await login(form);
       saveAuth(data.accessToken, data.user);
 
-      const redirectPath = localStorage.getItem("redirect_after_login");
+      const savedRedirect = localStorage.getItem("redirect_after_login");
 
-if (redirectFromEmail) {
-  router.push(redirectFromEmail);
-} else {
-  router.push("/");
-}
+      if (redirectFromEmail) {
+        router.push(redirectFromEmail);
+      } else if (savedRedirect) {
+        localStorage.removeItem("redirect_after_login");
+        router.push(savedRedirect);
+      } else {
+        router.push("/");
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed";
 
-if (
-  message.toLowerCase().includes("invalid email or password") ||
-  message.toLowerCase().includes("unauthorized")
-) {
-  setError("Email or password is incorrect. Please try again.");
-} else {
-  setError(message);
-}
+      if (
+        message.toLowerCase().includes("invalid email or password") ||
+        message.toLowerCase().includes("unauthorized")
+      ) {
+        setError("Email or password is incorrect. Please try again.");
+      } else {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -61,6 +84,7 @@ if (
           <div className="rounded-2xl bg-emerald-500/10 p-3">
             <ShieldCheck className="h-7 w-7 text-emerald-400" />
           </div>
+
           <div>
             <h1 className="text-2xl font-bold">Login</h1>
             <p className="text-sm text-slate-400">
@@ -88,11 +112,11 @@ if (
         </div>
 
         {error && (
-  <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
-    <p className="font-semibold text-red-300">Login failed</p>
-    <p className="mt-1">{error}</p>
-  </div>
-)}
+          <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+            <p className="font-semibold text-red-300">Login failed</p>
+            <p className="mt-1">{error}</p>
+          </div>
+        )}
 
         <button
           disabled={loading}
