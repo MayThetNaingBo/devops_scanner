@@ -7,16 +7,23 @@ export class MailService {
   constructor(private readonly configService: ConfigService) {}
 
   private createTransporter() {
-    return nodemailer.createTransport({
-      host: this.configService.get<string>('SMTP_HOST'),
-      port: Number(this.configService.get<string>('SMTP_PORT')),
-      secure: false,
-      auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASS'),
-      },
-    });
-  }
+  const port = Number(this.configService.get<string>('SMTP_PORT'));
+  const secure =
+    this.configService.get<string>('SMTP_SECURE') === 'true' || port === 465;
+
+  return nodemailer.createTransport({
+    host: this.configService.get<string>('SMTP_HOST'),
+    port,
+    secure,
+    auth: {
+      user: this.configService.get<string>('SMTP_USER'),
+      pass: this.configService.get<string>('SMTP_PASS'),
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+  });
+}
 
   async sendVerificationCode(email: string, code: string) {
     const transporter = this.createTransporter();
