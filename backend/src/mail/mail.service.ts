@@ -1,35 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  constructor(private readonly configService: ConfigService) {}
+  private readonly resend: Resend;
 
-  private createTransporter() {
-  const port = Number(this.configService.get<string>('SMTP_PORT'));
-  const secure =
-    this.configService.get<string>('SMTP_SECURE') === 'true' || port === 465;
+  constructor(private readonly configService: ConfigService) {
+    const apiKey = this.configService.get<string>('RESEND_API_KEY');
 
-  return nodemailer.createTransport({
-    host: this.configService.get<string>('SMTP_HOST'),
-    port,
-    secure,
-    auth: {
-      user: this.configService.get<string>('SMTP_USER'),
-      pass: this.configService.get<string>('SMTP_PASS'),
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-  });
-}
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY is missing');
+    }
+
+    this.resend = new Resend(apiKey);
+  }
 
   async sendVerificationCode(email: string, code: string) {
-    const transporter = this.createTransporter();
-
-    await transporter.sendMail({
-      from: this.configService.get<string>('MAIL_FROM'),
+    await this.resend.emails.send({
+      from:
+        this.configService.get<string>('MAIL_FROM') ||
+        'CodeGuard AI <onboarding@resend.dev>',
       to: email,
       subject: 'Verify your CodeGuard AI account',
       html: `
@@ -50,16 +41,19 @@ export class MailService {
     summary: string;
     findingsCount: number;
   }) {
-    const transporter = this.createTransporter();
-
     const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3001';
+      this.configService.get<string>('FRONTEND_URL') ||
+      'http://localhost:3001';
 
     const reportPath = `/scans/${params.scanJobId}`;
-const reportUrl = `${frontendUrl}/login?redirect=${encodeURIComponent(reportPath)}`;
+    const reportUrl = `${frontendUrl}/login?redirect=${encodeURIComponent(
+      reportPath,
+    )}`;
 
-    await transporter.sendMail({
-      from: this.configService.get<string>('MAIL_FROM'),
+    await this.resend.emails.send({
+      from:
+        this.configService.get<string>('MAIL_FROM') ||
+        'CodeGuard AI <onboarding@resend.dev>',
       to: params.email,
       subject: `CodeGuard AI scan result: ${params.repoName}`,
       html: `
@@ -72,18 +66,19 @@ const reportUrl = `${frontendUrl}/login?redirect=${encodeURIComponent(reportPath
         <p>${params.summary}</p>
 
         <p><strong>Total Findings:</strong> ${params.findingsCount}</p>
-<p>
-  <a 
-    href="${reportUrl}"
-    style="
-      color: #059669;
-      font-weight: 600;
-      text-decoration: underline;
-    "
-  >
-    Log in to CodeGuard AI to view your full report.
-  </a>
-</p>
+
+        <p>
+          <a 
+            href="${reportUrl}"
+            style="
+              color: #059669;
+              font-weight: 600;
+              text-decoration: underline;
+            "
+          >
+            Log in to CodeGuard AI to view your full report.
+          </a>
+        </p>
       `,
     });
   }

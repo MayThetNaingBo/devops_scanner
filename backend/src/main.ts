@@ -6,11 +6,15 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
+  const allowedOrigins = [
+  'http://localhost:3001',
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
 
+app.enableCors({
+  origin: allowedOrigins,
+  credentials: true,
+});
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -41,7 +45,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(3000);
+const port = process.env.PORT || 3000;
+await app.listen(port);
+
+console.log(`CodeGuard AI API running on port ${port}`);
 
   console.log('CodeGuard AI API running on http://localhost:3000');
   console.log('Swagger docs running on http://localhost:3000/docs');
