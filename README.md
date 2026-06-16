@@ -222,6 +222,6 @@ http://localhost:3001
 
 ## Author
 
-May Thet Naing Bo
+**May Thet Naing Bo**
 
 Software Developer focused on full-stack development, DevOps, cloud technologies, and AI-powered applications.
