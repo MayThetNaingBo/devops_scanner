@@ -112,7 +112,6 @@ npm install
 
 Copy `.env.example` to `.env` and fill in your own values.
 
-> Do not commit your real `.env` file to GitHub. Use `.env.example` for placeholder values.
 
 ### 5. Start PostgreSQL with Docker
 
