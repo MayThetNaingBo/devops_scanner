@@ -83,3 +83,146 @@ The system allows users to create an account, verify their email, submit a publi
 ## Demo
 
 ![CodeGuard AI Demo](./screenshots/demo.gif)
+
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/MayThetNaingBo/devops_scanner.git
+cd codeguard-ai
+```
+
+## Backend Setup
+
+### 2. Go to the backend folder
+
+```bash
+cd backend
+```
+
+### 3. Install dependencies
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in your own values.
+
+> Do not commit your real `.env` file to GitHub. Use `.env.example` for placeholder values.
+
+### 5. Start PostgreSQL with Docker
+
+```bash
+docker compose up -d
+```
+
+### 6. Run Prisma migration
+
+```bash
+npx prisma migrate dev
+```
+
+### 7. Generate Prisma client
+
+```bash
+npx prisma generate
+```
+
+### 8. Start the backend server
+
+```bash
+npm run start:dev
+```
+
+The backend should run on:
+
+```text
+http://localhost:3000
+```
+
+Swagger API documentation:
+
+```text
+http://localhost:3000/api
+```
+
+## Frontend Setup
+
+### 9. Go to the frontend folder
+
+Open a new terminal:
+
+```bash
+cd frontend
+```
+
+### 10. Install dependencies
+
+```bash
+npm install
+```
+
+### 11. Start the frontend
+
+```bash
+npm run dev
+```
+
+The frontend should run on:
+
+```text
+http://localhost:3001
+```
+
+## How It Works
+
+1. User signs up with name, email, and password.
+2. Backend hashes the password and sends an email verification code.
+3. User verifies email and logs in.
+4. User submits a public GitHub repository URL.
+5. Backend clones the repository temporarily.
+6. Scanner checks for:
+
+   * Exposed secrets
+   * Missing `.env.example`
+   * Committed `.env` files
+   * README quality
+   * Missing Dockerfile
+   * Missing GitHub Actions
+   * Missing build/start/test scripts
+
+7. Backend calculates scores and stores the scan report.
+8. User views the detailed report in the dashboard.
+9. Email report notification is sent to the user.
+
+## Scan Categories
+
+* Security
+* README Quality
+* Environment Configuration
+* Deployment Readiness
+* Code Structure
+
+
+## What I Learned
+
+* Building secure authentication with JWT
+* Implementing email verification
+* Using Prisma with PostgreSQL
+* Designing scan report data models
+* Cloning and analyzing GitHub repositories
+* Detecting security and configuration risks
+* Creating a full-stack dashboard with scan history
+* Sending automated email reports
+* Structuring a full-stack project for portfolio presentation
+
+
+## Author
+
+May Thet Naing Bo
+
+Software Developer focused on full-stack development, DevOps, cloud technologies, and AI-powered applications.
