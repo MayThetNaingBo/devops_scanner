@@ -7,7 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const allowedOrigins = [
-  'http://localhost:3001',
+   'http://localhost:3001',
+  'http://localhost:5173',
+  'https://codeguard.yhwinfo.xyz',
   process.env.FRONTEND_URL,
 ].filter(Boolean) as string[];
 
