@@ -125,7 +125,7 @@ export default function Home() {
                 <p className="text-slate-400">Rule-based scans</p>
                 <p className="mt-1 text-lg font-bold text-white">Unlimited</p>
                 <p className="mt-1 text-xs text-slate-500">
-                  Security, README, environment, deployment, and score checks.
+                  Repository security, README, environment, deployment, and score checks.
                 </p>
               </div>
 
@@ -135,7 +135,7 @@ export default function Home() {
                   {userRole === "ADMIN" ? "100" : "3"} / month
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  AI summary, security review, README review, and portfolio
+                  AI summary, repository security review, README review, and portfolio
                   feedback.
                 </p>
               </div>
@@ -241,7 +241,7 @@ function ReportView({ result }: { result: ScanReportResponse }) {
             />
 
             <AiReviewBlock
-              title="Security Review"
+              title="Repository Security Review"
               content={report.aiSummary.securityReview}
             />
 
@@ -271,7 +271,7 @@ function ReportView({ result }: { result: ScanReportResponse }) {
           <h2 className="text-xl font-bold">AI Review</h2>
 
           <p className="mt-2 text-sm text-slate-400">
-            AI review is not available for this scan. Your rule-based security
+            AI review is not available for this scan. Your rule-based repository security
             and readiness report is still complete.
           </p>
         </section>
@@ -279,7 +279,7 @@ function ReportView({ result }: { result: ScanReportResponse }) {
 
       <div className="grid gap-4 md:grid-cols-5">
         <ScoreCard title="Overall" score={report.overallScore} />
-        <ScoreCard title="Security" score={report.securityScore} />
+        <ScoreCard title="Repository Security" score={report.securityScore} />
         <ScoreCard title="README" score={report.readmeScore} />
         <ScoreCard title="Environment" score={report.envScore} />
         <ScoreCard title="Deployment" score={report.deploymentScore} />
@@ -289,7 +289,7 @@ function ReportView({ result }: { result: ScanReportResponse }) {
         <h2 className="mb-5 text-2xl font-bold">Score Breakdown</h2>
 
         <div className="space-y-4">
-          <ScoreBar label="Security" score={report.securityScore} />
+          <ScoreBar label="Repository Security" score={report.securityScore} />
           <ScoreBar label="README" score={report.readmeScore} />
           <ScoreBar label="Environment" score={report.envScore} />
           <ScoreBar label="Deployment" score={report.deploymentScore} />
