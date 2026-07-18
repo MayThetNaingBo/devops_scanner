@@ -163,7 +163,7 @@ export default function ScanDetailPage() {
                   />
 
                   <AiReviewBlock
-                    title="Security Review"
+                    title="Repository Security"
                     content={report.aiSummary.securityReview}
                   />
 
@@ -200,7 +200,7 @@ export default function ScanDetailPage() {
 
             <section className="mb-8 grid gap-4 md:grid-cols-5">
               <ScoreCard title="Overall" score={report.overallScore} />
-              <ScoreCard title="Security" score={report.securityScore} />
+              <ScoreCard title="Repository Security" score={report.securityScore} />
               <ScoreCard title="README" score={report.readmeScore} />
               <ScoreCard title="Environment" score={report.envScore} />
               <ScoreCard title="Deployment" score={report.deploymentScore} />
@@ -210,7 +210,7 @@ export default function ScanDetailPage() {
               <h2 className="mb-5 text-2xl font-bold">Score Breakdown</h2>
 
               <div className="space-y-4">
-                <ScoreBar label="Security" score={report.securityScore} />
+                <ScoreBar label="Repository Security" score={report.securityScore} />
                 <ScoreBar label="README" score={report.readmeScore} />
                 <ScoreBar label="Environment" score={report.envScore} />
                 <ScoreBar label="Deployment" score={report.deploymentScore} />
